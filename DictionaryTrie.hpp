@@ -1,15 +1,27 @@
-/**
- *  CSE 100 PA2 C++ Autocomplete
- *  Authors: Jor-el Briones, Christine Alvarado
+/* Description: This is a program that defines the trie
+ * program that can store to-be-searched words. It can
+ * create a network of nodes that stores each character
+ * in each word and allow that word to be searched for in 
+ * different ways.
+ *
+ * CSE 100 PA2 C++ Autocomplete
+ * Authors: Jor-el Briones, Christine Alvarado, Howard Wang (luw055)
+ * 
+ * Name: Luhao Wang
+ * Email: luw055@ucsd.edu
+ * Date: April 27, 2019
+ * Sources: Piazza
  */
-
 #ifndef DICTIONARY_TRIE_HPP
 #define DICTIONARY_TRIE_HPP
 
 #include <vector>
 #include <string>
 #include <queue>
+#include "DictionaryTrieNode.hpp"
+
 using namespace std;
+
 /**
  *  The class for a dictionary ADT, implemented as a trie
  *  You may implement this class as either a mulit-way trie
@@ -22,6 +34,12 @@ public:
   /* Create a new Dictionary that uses a Trie back end */
   DictionaryTrie();
 
+  /* Get the root of the trie*/
+  DictionaryTrieNode * getRoot();
+
+  /* Get the size of the trie*/
+  int getSize();
+
   /** 
    * Insert a word with its frequency into the dictionary.
    * Return true if the word was inserted, and false if it
@@ -31,6 +49,14 @@ public:
    * write out a specific word 300 times.
    */
   bool insert(std::string word, unsigned int freq);
+
+  /* Helper method for insert, uses recursion
+   * @param takes in the current node, the string to insert, and
+   * the current index
+   * @return returns true if success, false if failure
+   */
+  bool insertHelper(DictionaryTrieNode * curr, std::string word, 
+					unsigned int currInd, unsigned int frequency);
 
   /* Return true if word is in the dictionary, and false otherwise. */
   bool find(std::string word) const;
@@ -66,7 +92,10 @@ public:
   ~DictionaryTrie();
 
 private:
-  // Add your own data members and methods here
+	
+  int trieSize; // The number of nodes in the trie
+  DictionaryTrieNode * root; //Starting node of the data structure
+	
 };
 
 #endif // DICTIONARY_TRIE_H
