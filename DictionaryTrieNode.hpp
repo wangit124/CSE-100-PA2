@@ -24,7 +24,6 @@ class DictionaryTrieNode {
 
 		char data; // the data stored in this node
 		unsigned int frequency; // The word frequency, only stored at leaf
-		bool endWord; // Flag to check if this is the end of a word
 
 		DictionaryTrieNode * middle; // middle child
 		DictionaryTrieNode * left; // left child
@@ -33,7 +32,6 @@ class DictionaryTrieNode {
 		// Constructor.  Initialize a TrieNode with left, right, middle, freq
 		DictionaryTrieNode(char d) : data(d) { 
 		    frequency = 0;
-			endWord = false;
 			middle = left = right = nullptr;	
 		}
 };

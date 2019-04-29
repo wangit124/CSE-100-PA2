@@ -55,7 +55,7 @@ public:
    * the current index
    * @return returns true if success, false if failure
    */
-  bool insertHelper(DictionaryTrieNode * curr, std::string word, 
+  bool insertHelper(DictionaryTrieNode ** currPtr, std::string word, 
 					unsigned int currInd, unsigned int frequency);
 
   /* Return true if word is in the dictionary, and false otherwise. */
@@ -87,6 +87,9 @@ public:
    */
   std::vector<std::string>
   predictUnderscore(std::string pattern, unsigned int num_completions);
+
+  /* Helper method to destructor, used to delete all nodes*/
+  void deleteAll(DictionaryTrieNode ** currPtr);
 
   /* Destructor */
   ~DictionaryTrie();

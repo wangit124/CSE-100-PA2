@@ -1,5 +1,5 @@
 #include "DictionaryTrie.hpp"
-
+#include "DictionaryTrieNode.hpp"
 using namespace std;
 
 /**
@@ -16,5 +16,9 @@ using namespace std;
  */
 int main(int argc, char** argv)
 {
-    
+	DictionaryTrie * myTrie = new DictionaryTrie();
+	myTrie->insert("at", 4);
+	cout << myTrie->insert("ate", 6) << endl;
+	cout << myTrie->getRoot()->data << endl;
+	delete myTrie;
 }

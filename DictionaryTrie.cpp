@@ -48,39 +48,8 @@ bool DictionaryTrie::insert(std::string word, unsigned int freq)
 		return false;
 	}
 	
-	// Store return value
-	bool returnVal;
-
-	// Create copy of root
-	DictionaryTrieNode * curr = root;
-		
-	// If trie is empty, simply insert word
-	if (!curr) {
-		// Add word.length() new nodes
-		for (unsigned int i=0; i<word.length(); i++) {
-			// Insert differently at the last character
-			if (i == (word.length()-1)) {
-				curr = new DictionaryTrieNode(word.at(i));
-				curr->frequency = freq;
-				curr->endWord = true;
-			}
-			else {
-				curr = new DictionaryTrieNode(word.at(i));
-			}
-			
-			// Go to next node
-			curr = curr->middle;
-		}
-
-		// set return value
-		returnVal = true;
-	}
-	else {
-		// If tree not empty, call helper method
-		returnVal = insertHelper(curr, word, 0, freq);
-	}
-
-	return returnVal;
+	// Call insert helper method
+	return insertHelper(&root, word, 0, freq);
 }			
 
 /* Helper method for insert, uses recursion
@@ -88,53 +57,53 @@ bool DictionaryTrie::insert(std::string word, unsigned int freq)
 * the current index
 * @return returns true if success, false if failure
 */
-bool DictionaryTrie::insertHelper(DictionaryTrieNode * curr, std::string word, 
+bool DictionaryTrie::insertHelper(DictionaryTrieNode** currPtr,std::string word, 
 								   unsigned int currInd, unsigned int frequency) 
 {
 	// Get current character to insert
 	char insertChar = word.at(currInd);
 
 	// If current node is empty, insert and return true
-	if (!curr) {
-		curr = new DictionaryTrieNode(insertChar);
+	if (!(*currPtr)) {
+		*currPtr = new DictionaryTrieNode(insertChar);
 	}
 
 	// Get data of current node
-	char currChar = curr->data;
+	char currChar = (*currPtr)->data;
 	
 	// Check if data is smaller
 	if (insertChar < currChar) {
-		insertHelper(curr->left, word, currInd+1, frequency);
+		return insertHelper(&((*currPtr)->left), word, currInd+1, frequency);
 	}
 	// If larger, go right
 	else if (insertChar > currChar) {
-		insertHelper(curr->right, word, currInd+1, frequency);
+		return insertHelper(&((*currPtr)->right), word, currInd+1, frequency);
 	}
 	// Otherwise go middle
 	else {
 		if (currInd != (word.length()-1)) {
-			insertHelper(curr->middle, word, currInd+1, frequency);
+			return insertHelper(&((*currPtr)->middle), word, currInd+1, 
+									frequency);
 		}
 		else {
 			// If duplicate, return false
-			if (curr->endWord) {
+			if (((*currPtr)->frequency) != 0) {
 				return false;
 			}
 
 			// Otherwise set endWord and frequency
-			curr->frequency = frequency;
-			curr->endWord = true;
+			(*currPtr)->frequency = frequency;
+
+			return true;
 		}
 	}
-	// if successful, return true
-	return true;
 }
 
 /* Return true if word is in the dictionary, and false otherwise */
 bool DictionaryTrie::find(std::string word) const
 {
-}
 
+}
 
 /* 
  * Return up to num_completions of the most frequent completions
@@ -147,7 +116,8 @@ bool DictionaryTrie::find(std::string word) const
  * is a word (and is among the num_completions most frequent completions
  * of the prefix)
  */
-std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, unsigned int num_completions)
+std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, 
+												unsigned int num_completions)
 {
 }
 
@@ -161,11 +131,30 @@ std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, 
  * is a word (and is among the num_completions most frequent completions
  * of the pattern)
  */
-std::vector<string> DictionaryTrie::predictUnderscore(std::string pattern, unsigned int num_completions)
+std::vector<string> DictionaryTrie::predictUnderscore(std::string pattern, 
+												  unsigned int num_completions)
 {
+}
+
+/* Helper method to destructor, deletes all nodes*/
+void DictionaryTrie::deleteAll(DictionaryTrieNode ** currPtr)
+{
+	// While there is still memory, delete it
+	if ((*currPtr)->left) 
+		deleteAll(&((*currPtr)->left));
+	
+	if ((*currPtr)->middle) 
+		deleteAll(&((*currPtr)->middle));
+
+	if ((*currPtr)->right) 
+		deleteAll(&((*currPtr)->right));
+		
+	delete (*currPtr);
 }
 
 /* Destructor */
 DictionaryTrie::~DictionaryTrie()
 {
+	deleteAll(&root);
 }
+
