@@ -59,7 +59,7 @@ bool DictionaryTrie::insert(std::string word, unsigned int freq)
 * @return returns true if success, false if failure
 */
 bool DictionaryTrie::insertHelper(DictionaryTrieNode** currPtr,std::string word,
-								   unsigned int currInd, unsigned int frequency)
+				    unsigned int currInd, unsigned int frequency)
 {
 	// Get current character to insert
 	char insertChar = word.at(currInd);
@@ -84,7 +84,7 @@ bool DictionaryTrie::insertHelper(DictionaryTrieNode** currPtr,std::string word,
 	else {
 		if (currInd != (word.length()-1)) {
 			return insertHelper(&((*currPtr)->middle), word, currInd+1, 
-									frequency);
+						frequency);
 		}
 		else {
 			// If duplicate, return false
@@ -117,7 +117,7 @@ bool DictionaryTrie::find(std::string word) const
  * @return true if found, false otherwise
  */
 bool DictionaryTrie::findHelper(DictionaryTrieNode * curr, std::string word, 
-								unsigned int currInd) const
+				  unsigned int currInd) const
 {
 	// Get current character to insert
 	char findChar = word.at(currInd);
@@ -166,7 +166,7 @@ bool DictionaryTrie::findHelper(DictionaryTrieNode * curr, std::string word,
  * of the prefix)
  */
 std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, 
-												unsigned int num_completions)
+							     unsigned int num_completions)
 {
 	// Get root node
 	DictionaryTrieNode * curr = root;
@@ -245,7 +245,7 @@ std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix,
  * @params current node, string to build
  */
 void DictionaryTrie::predictHelper(DictionaryTrieNode*curr, std::string builder,
-									unsigned int num_completions) 
+					unsigned int num_completions) 
 {
 	// Check if curr is null
 	if (!curr) {
@@ -288,7 +288,7 @@ void DictionaryTrie::predictHelper(DictionaryTrieNode*curr, std::string builder,
  * of the pattern)
  */
 std::vector<string> DictionaryTrie::predictUnderscore(std::string pattern, 
-												  unsigned int num_completions)
+					               unsigned int num_completions)
 {
 	// Create empty vector
 	vector <std::string> empty;
