@@ -22,11 +22,13 @@ unsigned int numElem = 0;
 /** The hash function that we are testing for collisions */
 unsigned int hashFunc(const std::string & item) {
     // TODO: add the hash function you found here
+    return 0;
 }
 
 /** Returns the number of collisions in the hash table */
 unsigned int countCollision() {
     // TODO: Count the number of collisions in the pseudo hash table
+    return 0;
 }
 
 /** When load factor is high, rehash all the inserted items */
