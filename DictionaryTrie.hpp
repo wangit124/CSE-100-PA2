@@ -22,6 +22,8 @@
 
 using namespace std;
 
+typedef priority_queue<myPair, std::vector<myPair>, CompareNodes> myQueue;
+
 /**
  *  The class for a dictionary ADT, implemented as a trie
  *  You may implement this class as either a mulit-way trie
@@ -37,8 +39,8 @@ public:
   /* Get the root of the trie*/
   DictionaryTrieNode * getRoot();
 
-  /* Get the size of the trie*/
-  int getSize();
+  /* Get the complete queue of the trie*/
+  myQueue getComplete();
 
   /** 
    * Insert a word with its frequency into the dictionary.
@@ -61,6 +63,13 @@ public:
   /* Return true if word is in the dictionary, and false otherwise. */
   bool find(std::string word) const;
 
+  /* Helper method to find if word is in the dictionary
+   * @params current node, string to check, and currIndex
+   * @return true if found, false otherwise
+   */
+  bool findHelper(DictionaryTrieNode * curr, std::string word, 
+					unsigned int currInd) const;
+  
   /* 
    * Return up to num_completions of the most frequent completions
    * of the prefix, such that the completions are words in the dictionary.
@@ -74,6 +83,18 @@ public:
    */
   std::vector<std::string>
   predictCompletions(std::string prefix, unsigned int num_completions);
+ 
+  /* Helper method to find completions given a prefix
+   * @params current node, string to build
+   */
+  void predictHelper(DictionaryTrieNode * curr, std::string builder,
+									unsigned int num_completions); 
+
+  /* Helper method to update the complete data structure, takes in a pair
+   * and sees if needs to be pushed into list
+   * @param current pair to push, and number of completions to have
+   */
+   void updateCompletion(myPair & currPair, unsigned int k); 
 
   /* Return up to num_completions of the most frequent completions
    * of the pattern, such that the completions are words in the dictionary.
@@ -96,9 +117,14 @@ public:
 
 private:
 	
-  int trieSize; // The number of nodes in the trie
-  DictionaryTrieNode * root; //Starting node of the data structure
-	
+  // Starting node of the data structure
+  DictionaryTrieNode * root; 
+
+  // Queue to store n most frequent words
+  myQueue complete;
+
+  // least frequent in the queue
+  myPair threshold; 
 };
 
 #endif // DICTIONARY_TRIE_H

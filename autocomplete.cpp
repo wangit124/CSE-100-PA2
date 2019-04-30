@@ -12,23 +12,76 @@
 
 #include "DictionaryTrie.hpp"
 #include "DictionaryTrieNode.hpp"
+#include "util.hpp"
+#include <fstream>
+#include <sstream>
+
 using namespace std;
 
 /**
- * cout << "This program needs exactly one argument!" << endl;
- * cout << "Reading file: " << file << endl;
- * cout << "Enter a prefix/pattern to search for:" << endl;
- * cout << "Enter a number of completions:" << endl;
- * cout << completion << endl;
- * cout << "Continue? (y/n)" << endl;
- * 
- * arg 1 - Input file name (in format like freq_dict.txt)
+ * Autocomplete main program, prompts user to search
+ * for a prefix, and returns matching words
+ * autocompleted.
  */
 int main(int argc, char** argv)
 {
-	DictionaryTrie * myTrie = new DictionaryTrie();
-	myTrie->insert("at", 4);
-	cout << myTrie->insert("ate", 6) << endl;
-	cout << myTrie->getRoot()->data << endl;
-	delete myTrie;
+  	// Check valid arguments
+	if(argc < 2){
+		cout << "This program needs exactly one argument!" << endl;
+        cout << "\t First argument: name of dictionary file." << endl;
+        cout << endl;
+        exit(-1);
+    }
+	
+	// Read file
+	char * file = argv[1];
+	cout << "Reading file: " << file << endl;
+
+	// Read file
+	ifstream in;
+    in.open(file, ios::binary);
+
+	// Load dictionary
+    cout << "\nLoading dictionary..." << endl;
+    DictionaryTrie* dictionary_trie = new DictionaryTrie();
+
+    Utils::load_dict(*dictionary_trie, in);
+
+    cout << "Finished loading dictionary." << endl;
+
+	// Define vector to store results
+	vector <std::string> results;
+
+	// Read in prefix and print completions
+	while (true) {
+        string prefix;
+		string ws;		
+		string response;
+		int num_completions;
+
+		cout << "Enter a prefix/pattern to search for:" << endl;	
+		getline(cin, prefix);
+		
+		cout << "Enter a number of completions:" << endl;
+		getline(cin, ws);
+		num_completions = stoi(ws);
+        
+		results = dictionary_trie->predictCompletions(prefix,num_completions);
+    
+		// Print all completions
+		for (unsigned int i=0; i<results.size()-1; i++) {
+			cout << results[i] << ", ";
+		}
+		cout << results[results.size()-1] << endl;
+		
+		// Prompt user to continue, if not, exit
+		cout << "Continue? (y/n)" << endl;
+		getline(cin, response);
+		
+		if(response.compare("n") == 0) {
+			break;
+		}
+	}
+
+	delete dictionary_trie;
 }

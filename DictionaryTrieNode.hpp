@@ -10,9 +10,14 @@
 
 #ifndef DICTIONARYTRIENODE_HPP
 #define DICTIONARYTRIENODE_HPP
+
+#include <string>
+#include <utility>
 #include <iostream>
 
 using namespace std;
+
+typedef std::pair <std::string, unsigned int> myPair;
 
 /* DictionaryTrieNode class defines the left, right and middle children 
  * of the current node. It also stores the character, as well as a flag
@@ -34,6 +39,28 @@ class DictionaryTrieNode {
 		    frequency = 0;
 			middle = left = right = nullptr;	
 		}
+};
+
+/** The comparator used in sorting points based on frequency*/
+struct CompareNodes {
+    bool operator() (const myPair & p1, const myPair & p2) {
+		// Define <, > and equal operators
+		if (p1.second > p2.second) {
+			return true;
+		}
+		else if (p1.second < p2.second) {
+			return false;
+		}
+		else {
+			// if equal, sort alphabetically
+			if (p1.first.compare(p2.first) > 0) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+	}
 };
 #endif // DICTIONARYTRIENODE_HPP
 
