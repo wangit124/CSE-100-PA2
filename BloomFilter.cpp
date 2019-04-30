@@ -13,6 +13,7 @@ void BloomFilter::insert(std::string item)
 /* Determine whether an item is in the bloom filter */
 bool BloomFilter::find(std::string item) 
 {
+  return false;
 }
 
 /* Destrctor for the bloom filter */
