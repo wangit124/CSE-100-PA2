@@ -28,8 +28,6 @@ int main(int argc, char** argv)
   	// Check valid arguments
 	if(argc < 2){
 		cout << "This program needs exactly one argument!" << endl;
-        cout << "\t First argument: name of dictionary file." << endl;
-        cout << endl;
         exit(-1);
     }
 	
@@ -42,12 +40,9 @@ int main(int argc, char** argv)
     in.open(file, ios::binary);
 
 	// Load dictionary
-    cout << "\nLoading dictionary..." << endl;
     DictionaryTrie* dictionary_trie = new DictionaryTrie();
 
     Utils::load_dict(*dictionary_trie, in);
-
-    cout << "Finished loading dictionary." << endl;
 
 	// Define vector to store results
 	vector <std::string> results;
@@ -65,14 +60,13 @@ int main(int argc, char** argv)
 		cout << "Enter a number of completions:" << endl;
 		getline(cin, ws);
 		num_completions = stoi(ws);
-        
+		
 		results = dictionary_trie->predictCompletions(prefix,num_completions);
     
 		// Print all completions
-		for (unsigned int i=0; i<results.size()-1; i++) {
-			cout << results[i] << ", ";
+		for (unsigned int i=0; i<results.size(); i++) {
+			cout << results[i] << endl;
 		}
-		cout << results[results.size()-1] << endl;
 		
 		// Prompt user to continue, if not, exit
 		cout << "Continue? (y/n)" << endl;

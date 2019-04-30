@@ -18,6 +18,8 @@ DictionaryTrie::DictionaryTrie()
 {
 	// Set root to null, size to 0
 	root = nullptr;
+	threshold.first = "";
+	threshold.second = 0;
 }
 
 /* Method to get the root of DictionaryTrie*/
@@ -56,8 +58,8 @@ bool DictionaryTrie::insert(std::string word, unsigned int freq)
 * the current index
 * @return returns true if success, false if failure
 */
-bool DictionaryTrie::insertHelper(DictionaryTrieNode** currPtr,std::string word, 
-								   unsigned int currInd, unsigned int frequency) 
+bool DictionaryTrie::insertHelper(DictionaryTrieNode** currPtr,std::string word,
+								   unsigned int currInd, unsigned int frequency)
 {
 	// Get current character to insert
 	char insertChar = word.at(currInd);
@@ -288,6 +290,9 @@ void DictionaryTrie::predictHelper(DictionaryTrieNode*curr, std::string builder,
 std::vector<string> DictionaryTrie::predictUnderscore(std::string pattern, 
 												  unsigned int num_completions)
 {
+	// Create empty vector
+	vector <std::string> empty;
+	return empty;
 }
 
 /* Helper method to update the complete data structure, takes in a pair
