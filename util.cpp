@@ -1,3 +1,13 @@
+/* Description: This is the utility program
+ * that can insert items from a file into 
+ * dictionaryTrie. Also can process files.
+ *
+ * Name: Luhao Wang
+ * Email: luw055@ucsd.edu
+ * Date: May 05, 2019
+ * Sources: Piazza
+ */
+
 #include <iostream>
 #include <sstream>
 #include "util.hpp"
