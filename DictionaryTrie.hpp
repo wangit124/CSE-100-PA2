@@ -58,7 +58,7 @@ public:
    * @return returns true if success, false if failure
    */
   bool insertHelper(DictionaryTrieNode ** currPtr, std::string word, 
-		      unsigned int currInd, unsigned int frequency);
+					unsigned int currInd, unsigned int frequency);
 
   /* Return true if word is in the dictionary, and false otherwise. */
   bool find(std::string word) const;
@@ -68,7 +68,7 @@ public:
    * @return true if found, false otherwise
    */
   bool findHelper(DictionaryTrieNode * curr, std::string word, 
-		   unsigned int currInd) const;
+					unsigned int currInd) const;
   
   /* 
    * Return up to num_completions of the most frequent completions
@@ -85,11 +85,11 @@ public:
   predictCompletions(std::string prefix, unsigned int num_completions);
  
   /* Helper method to find completions given a prefix
-   * @params current node, string to build
+   * @params current node, string to build, number of completions
    */
   void predictHelper(DictionaryTrieNode * curr, std::string builder,
-			unsigned int num_completions); 
-
+									unsigned int num_completions); 
+  
   /* Helper method to update the complete data structure, takes in a pair
    * and sees if needs to be pushed into list
    * @param current pair to push, and number of completions to have
@@ -108,6 +108,13 @@ public:
    */
   std::vector<std::string>
   predictUnderscore(std::string pattern, unsigned int num_completions);
+
+  /* Helper method to find completions given a pattern with an underscore
+   * @params current node, string to build, number of completions
+   */
+  void predictPatternHelper(DictionaryTrieNode * curr, unsigned int currIndex, 
+								std::string pattern, std::string builder,
+									unsigned int num); 
 
   /* Helper method to destructor, used to delete all nodes*/
   void deleteAll(DictionaryTrieNode ** currPtr);

@@ -29,6 +29,7 @@ class DictionaryTrieNode {
 
 		char data; // the data stored in this node
 		unsigned int frequency; // The word frequency, only stored at leaf
+		unsigned int maxFreqBelow; // Maximum frequency in subtree
 
 		DictionaryTrieNode * middle; // middle child
 		DictionaryTrieNode * left; // left child
@@ -36,7 +37,7 @@ class DictionaryTrieNode {
 		
 		// Constructor.  Initialize a TrieNode with left, right, middle, freq
 		DictionaryTrieNode(char d) : data(d) { 
-		    frequency = 0;
+		    frequency = maxFreqBelow = 0;
 			middle = left = right = nullptr;	
 		}
 };

@@ -1,3 +1,14 @@
+/* Description: This is a program that defines the bloom filter program
+ * that inserts a string into three positions in a table so
+ * that it can be found later. The program's purpose is to reduce
+ * the chance of false positives being found.
+ *
+ * Name: Luhao Wang
+ * Email: luw055@ucsd.edu
+ * Date: May 05, 2019
+ * Sources: Piazza
+ */
+
 #ifndef BLOOM_FILTER_HPP
 #define BLOOM_FILTER_HPP
 
@@ -22,17 +33,23 @@ public:
 
     /* Determine whether an item is in the bloom filter */
     bool find(std::string item);
-
-    /* Destrctor for the bloom filter */
+	
+	/* Destrctor for the bloom filter */
     ~BloomFilter();
 
 private:
 
     // The char array as the hash table
-    unsigned char* table;
+    unsigned char * table;
     unsigned int numSlots;
-    
-    // TODO: Add your own data and method here
 
+	/* Hash function1, takes a string, and table size and returns index*/
+	unsigned int hashFunc1(std::string item, unsigned int size);
+
+	/* Hash function2, takes a string, and table size and returns index*/
+	unsigned int hashFunc2(std::string item, unsigned int size);
+
+	/* Hash function3, takes a string, and table size and returns index*/
+	unsigned int hashFunc3(std::string item, unsigned int size);
 };
 #endif // BLOOM_FILTER

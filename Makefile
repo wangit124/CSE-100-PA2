@@ -19,7 +19,7 @@ hashStats: BloomFilter.o
 
 test: util.o DictionaryTrie.o
 
-DictionaryTrie.o: DictionaryTrie.hpp
+DictionaryTrie.o: DictionaryTrie.hpp DictionaryTrieNode.hpp
 
 BloomFilter.o: BloomFilter.hpp
 

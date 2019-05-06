@@ -13,6 +13,8 @@
 #include "DictionaryTrieNode.hpp"
 #include "DictionaryTrie.hpp"
 
+#define UNDERSCORE '_'
+
 /* Create a new Dictionary that uses a Trie back end */
 DictionaryTrie::DictionaryTrie()
 {
@@ -59,7 +61,7 @@ bool DictionaryTrie::insert(std::string word, unsigned int freq)
 * @return returns true if success, false if failure
 */
 bool DictionaryTrie::insertHelper(DictionaryTrieNode** currPtr,std::string word,
-				    unsigned int currInd, unsigned int frequency)
+								   unsigned int currInd, unsigned int frequency)
 {
 	// Get current character to insert
 	char insertChar = word.at(currInd);
@@ -67,6 +69,11 @@ bool DictionaryTrie::insertHelper(DictionaryTrieNode** currPtr,std::string word,
 	// If current node is empty, insert and return true
 	if (!(*currPtr)) {
 		*currPtr = new DictionaryTrieNode(insertChar);
+	}
+	
+	// Set max frequency
+	if ((*currPtr)->maxFreqBelow < frequency) {
+		(*currPtr)->maxFreqBelow = frequency;
 	}
 
 	// Get data of current node
@@ -84,7 +91,7 @@ bool DictionaryTrie::insertHelper(DictionaryTrieNode** currPtr,std::string word,
 	else {
 		if (currInd != (word.length()-1)) {
 			return insertHelper(&((*currPtr)->middle), word, currInd+1, 
-						frequency);
+									frequency);
 		}
 		else {
 			// If duplicate, return false
@@ -117,7 +124,7 @@ bool DictionaryTrie::find(std::string word) const
  * @return true if found, false otherwise
  */
 bool DictionaryTrie::findHelper(DictionaryTrieNode * curr, std::string word, 
-				  unsigned int currInd) const
+								unsigned int currInd) const
 {
 	// Get current character to insert
 	char findChar = word.at(currInd);
@@ -166,7 +173,7 @@ bool DictionaryTrie::findHelper(DictionaryTrieNode * curr, std::string word,
  * of the prefix)
  */
 std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, 
-							     unsigned int num_completions)
+												unsigned int num_completions)
 {
 	// Get root node
 	DictionaryTrieNode * curr = root;
@@ -193,7 +200,7 @@ std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix,
 	char currPrefix;
 	char currChar;
 	unsigned int currIndex = 0;
-
+	
 	// First traverse to end of prefix
 	while (true) {
 		// If curr is null, return empty
@@ -202,7 +209,7 @@ std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix,
 		}
 
 		// Get current prefix
-		currPrefix = prefix.at(currIndex);
+		currPrefix = builder.at(currIndex);
 		currChar = curr->data;
 
 		if (currPrefix < currChar) {
@@ -213,9 +220,9 @@ std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix,
 		}
 		else {
 			// If checking last character, see if prefix is a completion
-			if (currIndex == prefix.length()-1) {
+			if (currIndex == prefix.length() - 1) {
 				if (curr->frequency > 0) {
-					myPair prefixComplete (prefix, curr->frequency);
+					myPair prefixComplete(prefix, curr->frequency);
 					updateCompletion(prefixComplete, num_completions);
 				}
 			}
@@ -224,7 +231,7 @@ std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix,
 		}
 		
 		// If at end of prefix, break
-		if (currIndex == prefix.length()) {
+		if (currIndex == builder.length()) {
 			break;
 		}
 	}
@@ -242,20 +249,25 @@ std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix,
 }
 
 /* Helper method to find completions given a prefix
- * @params current node, string to build
+ * @params current node, string to build, number of completions
  */
 void DictionaryTrie::predictHelper(DictionaryTrieNode*curr, std::string builder,
-					unsigned int num_completions) 
+									unsigned int num_completions) 
 {
 	// Check if curr is null
 	if (!curr) {
 		return;
 	}
+	
+	// If max frequency is less than threshold, return
+	if ((curr->maxFreqBelow) < threshold.second) {
+		return;
+	}
 
 	// Build up string
 	std::string prevBuild = builder;
-	builder += curr->data;
-	
+	builder += curr->data;	
+
 	// If curr does not equal null, check if end of word
 	if ((curr->frequency) != 0) {
 		// Create pair
@@ -288,11 +300,150 @@ void DictionaryTrie::predictHelper(DictionaryTrieNode*curr, std::string builder,
  * of the pattern)
  */
 std::vector<string> DictionaryTrie::predictUnderscore(std::string pattern, 
-					               unsigned int num_completions)
+												  unsigned int num_completions)
 {
-	// Create empty vector
-	vector <std::string> empty;
+	// Get root node
+	DictionaryTrieNode * curr = root;
+
+	// Create a vector to store strings
+	vector<std::string> empty;
+	
+	// if prefix is empty, or num_completions is empty, return empty
+	if (pattern.length() == 0 || num_completions == 0) {
+		return empty;
+	}
+	
+	// Empty complete and set threshold to 0
+	while (!complete.empty()) {
+		complete.pop();
+	}
+	threshold.first = "";
+	threshold.second = 0;
+
+	// Extract prefix from pattern
+	std::string builder = "";
+	
+	// Get index of underscore
+	unsigned int underscoreInd = 0;
+	for (unsigned int i=0; i<pattern.length(); i++) {
+		// If reached underscore, break
+		if (pattern.at(i) == UNDERSCORE) {
+			underscoreInd = i;
+			break;
+		}
+		// otherwise append to string
+		builder += pattern.at(i);
+	}
+
+	// Initialize current prefix and current character
+	char currPrefix;
+	char currChar;
+	unsigned int currIndex = 0;
+		
+	// First traverse to end of prefix
+	while (true) {
+		// If curr is null, return empty
+		if (!curr) {
+			return empty;
+		}
+		
+		// If builder has no characters, break
+		if (builder.length() == 0) {
+			break;
+		}
+
+		// Get current prefix
+		currPrefix = builder.at(currIndex);
+		currChar = curr->data;
+
+		if (currPrefix < currChar) {
+			curr = curr->left;
+		}
+		else if (currPrefix > currChar) {
+			curr = curr->right;
+		}
+		else {
+			// If checking last character, see if prefix is a completion
+			curr = curr->middle;
+			currIndex++;
+		}
+		
+		// If at end of prefix, break
+		if (currIndex == builder.length()) {
+			break;
+		}
+	}
+	
+	// Call helper method to recurse through all possible patterns
+	predictPatternHelper(curr, underscoreInd, pattern, builder, 
+								num_completions);
+
+	// Pop from pQueue and store in vector
+	while (complete.size() > 0) {
+		empty.insert(empty.begin(), complete.top().first);
+		complete.pop();
+	}
+
 	return empty;
+}
+
+/* Helper method to find completions given a pattern with an underscore
+ * @params current node, string to build, number of completions
+ */
+void DictionaryTrie::predictPatternHelper(DictionaryTrieNode * curr, 
+									unsigned int currIndex, std::string pattern, 
+										std::string builder, unsigned int num) 
+{
+	// Check if curr is null
+	if (!curr) {
+		return;
+	}
+	
+	// Build up string
+	std::string prevBuild = builder;
+	builder += curr->data;	
+
+	// If curr does not equal null, check if end of word
+	if ((curr->frequency) != 0) {
+		
+		// Check if pattern matches builder
+		if (builder.length() == pattern.length()) {
+			// Get check if the strings match
+			bool matching = true;
+			for (unsigned int i=0; i<pattern.length(); i++) {
+				if (pattern.at(i) != builder.at(i) && 
+					pattern.at(i) != UNDERSCORE) {
+						
+					matching = false;
+					break;
+				}
+			}
+
+			// Create pair and update if matching
+			if (matching) {
+				myPair nodeComplete (builder, curr->frequency);
+		
+				// Call update method
+				updateCompletion(nodeComplete, num);
+			}
+		}
+	}
+	
+	// Return if reached end of pattern
+	if (currIndex == pattern.length()) {
+		return;
+	}
+
+	// Traverse left, middle, right
+	if (curr->left) {
+		predictPatternHelper(curr->left, currIndex, pattern, prevBuild, num);
+	}
+	if (curr->middle) {
+		predictPatternHelper(curr->middle, currIndex+1, pattern, builder, num);
+	}
+	if (curr->right) {
+		predictPatternHelper(curr->right, currIndex, pattern, prevBuild, num);
+	}
 }
 
 /* Helper method to update the complete data structure, takes in a pair

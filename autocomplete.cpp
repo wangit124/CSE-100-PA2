@@ -13,8 +13,11 @@
 #include "DictionaryTrie.hpp"
 #include "DictionaryTrieNode.hpp"
 #include "util.hpp"
+#include <string>
 #include <fstream>
 #include <sstream>
+
+#define UNDERSCORE '_'
 
 using namespace std;
 
@@ -28,8 +31,8 @@ int main(int argc, char** argv)
   	// Check valid arguments
 	if(argc < 2){
 		cout << "This program needs exactly one argument!" << endl;
-        	exit(-1);
-    	}
+        exit(-1);
+    }
 	
 	// Read file
 	char * file = argv[1];
@@ -37,19 +40,19 @@ int main(int argc, char** argv)
 
 	// Read file
 	ifstream in;
-    	in.open(file, ios::binary);
+    in.open(file, ios::binary);
 
 	// Load dictionary
-    	DictionaryTrie* dictionary_trie = new DictionaryTrie();
+    DictionaryTrie* dictionary_trie = new DictionaryTrie();
 
-    	Utils::load_dict(*dictionary_trie, in);
+    Utils::load_dict(*dictionary_trie, in);
 
 	// Define vector to store results
 	vector <std::string> results;
 
 	// Read in prefix and print completions
 	while (true) {
-        	string prefix;
+        string prefix;
 		string ws;		
 		string response;
 		int num_completions;
@@ -60,9 +63,15 @@ int main(int argc, char** argv)
 		cout << "Enter a number of completions:" << endl;
 		getline(cin, ws);
 		num_completions = stoi(ws);
-		
-		results = dictionary_trie->predictCompletions(prefix,num_completions);
-    
+
+		// If string contains underscore, call predictUnderscore
+		if (prefix.find(UNDERSCORE) != std::string::npos) {
+			results=dictionary_trie->predictUnderscore(prefix,num_completions);
+		}
+		else {
+			results=dictionary_trie->predictCompletions(prefix,num_completions);
+		}
+
 		// Print all completions
 		for (unsigned int i=0; i<results.size(); i++) {
 			cout << results[i] << endl;
@@ -77,5 +86,7 @@ int main(int argc, char** argv)
 		}
 	}
 
+	// Close filestreams
+	in.close();
 	delete dictionary_trie;
 }
